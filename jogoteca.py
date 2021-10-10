@@ -1,12 +1,45 @@
-from flask import Flask, render_template
+from flask import Flask, render_template, request, redirect
 
 app = Flask(__name__)
 
-@app.route('/inicio')
-def ola():
-    lista = ['Tetris', 'Super Mario', 'Pokemon Gold']
+
+class Jogo:
+    def __init__(self, nome, categoria, console):
+        self.nome = nome
+        self.categoria = categoria
+        self.console = console
+
+
+lista = ['Tetris', 'Super Mario', 'Pokemon Gold']
+jogo1 = Jogo('Super Mario', 'Ação', 'SNES')
+jogo2 = Jogo('Pokemon gold', 'RPG', 'GBA')
+lista = [jogo1, jogo2]
+
+
+@app.route('/')
+def index():
+    #lista = ['Tetris', 'Super Mario', 'Pokemon Gold']
+    # jogo1 = Jogo('Super Mario', 'Ação', 'SNES')
+    # jogo2 = Jogo('Pokemon gold', 'RPG', 'GBA')
+    # lista = [jogo1, jogo2]
     return render_template('lista.html', titulo='Jogos', jogos=lista)
 
 # trecho da app
 #app.run(host='0.0.0.0', port=8080)
-app.run()
+
+@app.route('/novo')
+def novo():
+    return render_template('novo.html', titulo='Novo Jogo')
+
+
+@app.route('/criar', methods=['POST',])
+def criar():
+    nome = request.form['nome']
+    categoria = request.form['categoria']
+    console = request.form['console']
+    jogo = Jogo(nome, categoria, console)
+    lista.append(jogo)
+    return redirect('/')
+    # return render_template('lista.html', titulo='Jogos', jogos=lista)
+
+app.run(debug=True)
